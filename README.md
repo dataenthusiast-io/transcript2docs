@@ -92,4 +92,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-If you have any questions, feel free to reach out to [dataenthusiast.io].
+If you have any questions, or want to contribute, feel free to reach out via [dataenthusiast.io](https://dataenthusiast.io/) or directly onl [LinkedIn](https://www.linkedin.com/in/nicolasathanasopoulos/).
