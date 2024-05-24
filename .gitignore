@@ -1,0 +1,10 @@
+### macOS ###
+.DS_Store
+.AppleDouble
+.LSOverride
+
+### keys ###
+.env
+
+### environments ###
+.venv*

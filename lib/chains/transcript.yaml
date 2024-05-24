@@ -1,0 +1,24 @@
+llm:
+  model: 'gpt-3.5-turbo'
+  temperature: 0.3
+prompt: |
+  <instructions>
+  I'm going to present you a transcript that has been recorded as part of a {transcript_type}. It can contain semenatic errors that need to found and corrected:
+  <example>'AP' -> 'AEP (Adobe Experience Platform)'</example>
+  <example>'Microsoft as your ID' -> 'Microsoft Azure ID'</example>
+  Act as a diligent and thourough editor; search for these errors and optimize the script as much as you can.
+  </instructions>
+  Here are additional contextual keywords of the topic, subject and content of the meeting that will help you to detect and correct these errors more easily:
+  <context>
+  {context}
+  </context>
+  Here is the transcript:
+  <transcript>
+  {transcript}
+  </transcript>
+  <output>
+  The output should contain all elements from the original transcript but in an improved format. Try to remove redundancies like frequently mentioned names:
+  <example>'Attendee: …'</example>
+  Along with any other elements which are not relevant for the overall narrative or didactical flow.
+  </output>
+  Optimized transcript:

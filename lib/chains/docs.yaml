@@ -1,0 +1,22 @@
+llm:
+  model: 'gpt-4-turbo'
+  temperature: 0.3
+prompt: |
+  <instructions>
+  You will be given a transcript that has been recorded as part of a {transcript_type}. Act as an author and create a proper step-by-step document out of the transcript; be as comprehensive, precise and detailed as possible preparing the document while keeping it actionable and clear for someone who needs careful instructions.
+  </instructions>
+  To give you a better understanding of the overall context and topic, here are a few keywords:
+  <context>
+  {context}
+  </context>
+  Here is the full transcript:
+  <transcript>
+  {transcript}
+  </transcript>
+  The final document should contain (but not limited) the following elements as part of its overall structure:
+  <structure>
+  {structure}
+  </structure>
+  <output>
+  The output should be formatted in markdown; use cohesive structure and narratives with properly structured sections and subsections that are well connected for the best didactical walk-through; be as comprehensive as possible.
+  </output>
