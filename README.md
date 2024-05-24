@@ -1,4 +1,4 @@
-# Transcript2Docs
+# :bookmark_tabs: Transcript2Docs
 
 ![Transcript2Docs Screenshot](assets/screenshot.png)
 
@@ -6,21 +6,23 @@
 
 Creating documentation is what everyone needs, but rarely anyone wants to take up. That's why continuously, knowledge is shared in endless handover meetings and similar sessions. At the same time, providers like Google or Microsoft offer the ability to get transcripts and summaries as part of their copilots. However, all of these general-purpose services and base models have one central problem: they lack context, which can lead to semantic errors, especially in domain-specific or technical contexts.
 
-For example, in one of my first attempts, we handled a topic on IDs, and all of a sudden, "Microsoft Azure ID" became "Microsoft Your ID." The problem is, without context-based optimization, these semantic errors persist downstream, making it impossible to derive real benefit from the information.
+For example, in my daily life, I handle a lot of domain specific topics which all of a sudden got interpreted incorrectly by the automated transcription:
 
-That's why I came up with Transcript2Docs:
+- "Microsoft Azure ID" became "Microsoft Your ID"
+- "Microsoft Entra ID" was transcribed as "Microsoft Enter ID"
+- "Tag property" was understood as "Peck property"
 
-Take the transcript from any provider (e.g., Google Meet)
-Simply provide semantic context by keywords
-Provide the structure of the output document you want (e.g., introduction, key points, summary)
-Select the type of meeting
--> Let the application correct the transcript and craft a compelling document out of it
+The problem is, without context-based optimization, these semantic errors persist downstream, making it impossible to derive real benefit from the information. Without correction, you cannot leverage the capabilities of LLMs to, for instance, write up documents automatically, as they will also lack context. Hence, these errors will be inherited, making the information useless, especially in technically critical environments.
 
--> Main use case for technical documentation (e.g., handover or trainings can be simply recorded and then converted into detailed documentation later)
+That's why I came up with :bookmark_tabs: **Transcript2Docs**. It takes the transcript from any provider (e.g., Google Meet), allows users to provide semantic context by keywords, and specify the structure of the output document they want (e.g., introduction, key points, summary) and the type of meeting. The application then corrects the transcript and crafts a compelling document out of it. The main use case is for technical documentation, where handover sessions or trainings can be simply recorded and then converted into detailed documentation later.
 
-While this is not a production-ready application, my main motivation is to showcase the integration between "human in the loop" and programmatic operations on LLMs.
+**Note: This is not aiming to be a production-ready application. My main motivation is to showcase the real benefit of hybrid use cases with programmatic operations on LLMs combined with a “human in the loop”.**
 
-## Features
+## Solution Overview
+
+![Solution Diagram](assets/solution_diagram.png)
+
+### Features
 
 - **Contextual Transcript Correction**: Automatically corrects the transcript based on the provided context.
 - **Custom Document Structure**: Create documents with a user-defined structure.
@@ -29,11 +31,24 @@ While this is not a production-ready application, my main motivation is to showc
 - **Modular Components**: Based on LangChain, Streamlit, and OpenAI (can be exchanged with local LLMs such as Ollama).
 - **Configurable Chains**: Chains are configurable through the YAML files `transcript.yaml` and `docs.yaml`.
 
+### Components
+- **Streamlit for UI**: Streamlit is an open-source app framework used to create interactive web applications. It provides a simple and efficient way to build and deploy user interfaces for the application, allowing users to upload transcripts, input context, and specify document structure.
+- **LangChain for Programmatic Operations and Text Splitting**: LangChain is a powerful library that facilitates programmatic operations such as text processing and splitting. It is used to manage the complex workflows involved in handling and processing large text data, ensuring that the documents are chunked appropriately according to token limits.
+- **OpenAI as Hosted LLM**: OpenAI provides large language models (LLMs) hosted on its platform. These models are used for natural language processing tasks, including understanding context, generating text, and ensuring semantic accuracy. The hosted LLMs are leveraged to process each chunk of the transcript and generate the final documentation.
+
+### Workflow
+1. **Transcript Upload**: The transcript from the meeting (e.g., Google Meet) is uploaded via the Streamlit UI. Along with the transcript, users provide essential information about the context and structure of the desired document.
+2. **Document Chunking**: Using LangChain, the document is split into smaller chunks based on a predefined token limit. This step ensures that each chunk is manageable for the LLM to process without exceeding its token constraints.
+3. **First Chain Processing**: The first chain iterates in a loop over each chunk of the document. Each chunk is submitted individually to the OpenAI LLM to ensure that the model pays close attention to every detail and does not deviate from the original content.
+4. **Chunk Retrieval and Merging**: After processing each chunk, the results are retrieved and stored in an array. Once all chunks have been processed, they are merged together to form a cohesive document.
+5. **Second Chain Initialization**: The second chain is initialized with a specific prompt to write the documentation based on the provided structure. This step involves instructing the LLM to organize and format the content according to the user's requirements.
+6. **Final Document Presentation**: The final document is presented in Markdown format. This presentation allows for easy editing, sharing, and further refinement if needed.
+
 ## Installation
 
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/yourusername/Transcript2Docs.git
+   git clone https://github.com/dataenthusiast-io/transcript2docs.git
    cd Transcript2Docs
    ```
 
@@ -46,6 +61,10 @@ While this is not a production-ready application, my main motivation is to showc
 3. **Install the required dependencies:**
    ```sh
    pip install -r requirements.txt
+   ```
+4. **Add OpenAI API key:**
+   ```sh
+   echo "OPENAI_API_KEY=your_openai_api_key_here" > .env
    ```
 
 ## Configuration
@@ -63,23 +82,9 @@ Make sure to review the YAML files for chains and adjust models and prompts if r
    ```
 
 2. **Upload your transcript file (.txt format).**
-3. **Enter context keywords and document structure.**
+3. **Enter context keywords and document structure (best as comma seperated, individual values).**
 4. **Select the type of meeting transcript.**
 5. **Click on 'Generate Docs'.**
-
-## Repository Structure
-
-```
-Transcript2Docs/
-├── app.py
-├── lib/
-│   ├── engine.py
-│   ├── chains/
-│       ├── transcript.yaml
-│       └── docs.yaml
-├── requirements.txt
-└── README.md
-```
 
 ## License
 
