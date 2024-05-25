@@ -1,6 +1,7 @@
 llm:
-  model: 'gpt-4-turbo'
-  temperature: 0.3
+  provider : 'OpenAI'
+  model: 'gpt-4o'
+  temperature: 0.5
 prompt: |
   <instructions>
   You will be given a transcript that has been recorded as part of a {transcript_type}. Act as an author and create a proper step-by-step document out of the transcript; be as comprehensive, precise and detailed as possible preparing the document while keeping it actionable and clear for someone who needs careful instructions.

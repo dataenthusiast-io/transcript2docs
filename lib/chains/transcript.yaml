@@ -1,5 +1,6 @@
 llm:
-  model: 'gpt-3.5-turbo'
+  provider : 'Ollama'
+  model: 'llama3'
   temperature: 0.3
 prompt: |
   <instructions>

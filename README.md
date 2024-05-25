@@ -28,13 +28,19 @@ That's why I came up with :bookmark_tabs: **Transcript2Docs**. It takes the tran
 - **Custom Document Structure**: Create documents with a user-defined structure.
 - **Multiple Meeting Types**: Supports various types of meetings like Live Tutorial, Technical Walk-Through, Knowledge Sharing, and General Meeting.
 - **Easy Integration**: Works with transcripts from any provider.
-- **Modular Components**: Based on LangChain, Streamlit, and OpenAI (can be exchanged with local LLMs such as Ollama).
+- **Modular LLM Configuration**: Based on LangChain, you can configure the provider, model and temperature individually for each chain (incl. localhost models supported by Ollama)
 - **Configurable Chains**: Chains are configurable through the YAML files `transcript.yaml` and `docs.yaml`.
 
 ### Components
 - **Streamlit for UI**: Streamlit is an open-source app framework used to create interactive web applications. It provides a simple and efficient way to build and deploy user interfaces for the application, allowing users to upload transcripts, input context, and specify document structure.
 - **LangChain for Programmatic Operations and Text Splitting**: LangChain is a powerful library that facilitates programmatic operations such as text processing and splitting. It is used to manage the complex workflows involved in handling and processing large text data, ensuring that the documents are chunked appropriately according to token limits.
-- **OpenAI as Hosted LLM**: OpenAI provides large language models (LLMs) hosted on its platform. These models are used for natural language processing tasks, including understanding context, generating text, and ensuring semantic accuracy. The hosted LLMs are leveraged to process each chunk of the transcript and generate the final documentation.
+
+### LLMs
+- **OpenAI:** Any model offered by OpenAI that is supported by the ChatOpenAI API can be leveraged.
+- **Anthropic:** Hosted LLMs provided by Anthropic can be used (e.g., Claude 3).
+- **Ollama:** To support privacy sensitive tasks, any locally installed and run model from Ollama can be used.
+
+**For more information how to set the models up, see [Configuration](#configuration)**
 
 ### Workflow
 1. **Transcript Upload**: The transcript from the meeting (e.g., Google Meet) is uploaded via the Streamlit UI. Along with the transcript, users provide essential information about the context and structure of the desired document.
@@ -55,24 +61,40 @@ That's why I came up with :bookmark_tabs: **Transcript2Docs**. It takes the tran
 2. **Set up a virtual environment:**
    ```sh
    python -m venv venv
-   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+   source venv/bin/activate
    ```
 
 3. **Install the required dependencies:**
    ```sh
    pip install -r requirements.txt
    ```
-4. **Add OpenAI API key:**
-   ```sh
+4. **Enable LLM:**
+   
+   Either configure an API key to a proprietary model:
+   ```
    echo "OPENAI_API_KEY=your_openai_api_key_here" > .env
    ```
+   or get [Ollama](https://github.com/ollama/ollama/tree/main) installed to use local models.
 
 ## Configuration
 
 Make sure to review the YAML files for chains and adjust models and prompts if required:
 
-- `lib/chains/transcript.yaml`
-- `lib/chains/docs.yaml`
+````
+lib/chains/transcript.yaml
+lib/chains/docs.yaml
+````
+
+You can configure the LLM (provider, model, temperature) as well as the prompts directly there:
+
+```
+llm:
+  provider : 'Ollama'
+  model: 'llama3'
+  temperature: 0.5
+prompt: |
+  <prompt>
+```
 
 ## Usage
 
@@ -85,6 +107,8 @@ Make sure to review the YAML files for chains and adjust models and prompts if r
 3. **Enter context keywords and document structure (best as comma seperated, individual values).**
 4. **Select the type of meeting transcript.**
 5. **Click on 'Generate Docs'.**
+
+**If you configured a local model, ensure to have Ollama running before starting the application!**
 
 ## License
 

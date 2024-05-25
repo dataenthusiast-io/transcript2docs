@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Custom project folders
+lib/cache/*
+!lib/cache/.gitkeep 
+
 # generated frontend files
 code/dist/
 
