@@ -4,13 +4,13 @@
 
 ## Overview
 
-Creating documentation is what everyone needs, but rarely anyone wants to take up. That's why continuously, knowledge is shared in endless handover meetings and similar sessions. At the same time, providers like Google or Microsoft offer the ability to get transcripts and summaries as part of their copilots. However, all of these general-purpose services and base models have one central problem: they lack context, which can lead to semantic errors, especially in domain-specific or technical contexts.
+Creating documentation is what everyone needs, but rarely anyone wants to take up. That’s why continuously, knowledge is shared in endless handover meetings and similar sessions. At the same time, providers like Google or Microsoft offer the ability to get transcripts and summaries as part of their copilots. However, all of these general-purpose services and base models have one central problem: they lack context, which can lead to semantic errors, especially in domain-specific or technical contexts.
 
 For example, in my daily life, I handle a lot of domain specific topics which all of a sudden got interpreted incorrectly by the automated transcription:
 
-- "Microsoft Azure ID" became "Microsoft Your ID"
-- "Microsoft Entra ID" was transcribed as "Microsoft Enter ID"
-- "Tag property" was understood as "Peck property"
+- “Microsoft Azure ID” became “Microsoft Your ID”
+- “Microsoft Entra ID” was transcribed as “Microsoft Enter ID”
+- “Tag property” was understood as “Peck property”
 
 The problem is, without context-based optimization, these semantic errors persist downstream, making it impossible to derive real benefit from the information. Without correction, you cannot leverage the capabilities of LLMs to, for instance, write up documents automatically, as they will also lack context. Hence, these errors will be inherited, making the information useless, especially in technically critical environments.
 
@@ -28,7 +28,7 @@ That's why I came up with :bookmark_tabs: **Transcript2Docs**. It takes the tran
 - **Custom Document Structure**: Create documents with a user-defined structure.
 - **Multiple Meeting Types**: Supports various types of meetings like Live Tutorial, Technical Walk-Through, Knowledge Sharing, and General Meeting.
 - **Easy Integration**: Works with transcripts from any provider.
-- **Modular LLM Configuration**: Based on LangChain, you can configure the provider, model and temperature individually for each chain (incl. localhost models supported by Ollama)
+- **Modular LLM Configuration**: Based on LangChain, you can configure the provider, model, and temperature individually for each chain (including localhost models supported by Ollama).
 - **Configurable Chains**: Chains are configurable through the YAML files `transcript.yaml` and `docs.yaml`.
 
 ### Components
@@ -38,9 +38,9 @@ That's why I came up with :bookmark_tabs: **Transcript2Docs**. It takes the tran
 ### LLMs
 - **OpenAI:** Any model offered by OpenAI that is supported by the ChatOpenAI API can be leveraged.
 - **Anthropic:** Hosted LLMs provided by Anthropic can be used (e.g., Claude 3).
-- **Ollama:** To support privacy sensitive tasks, any locally installed and run model from Ollama can be used.
+- **Ollama:** To support privacy-sensitive tasks, any locally installed and run model from Ollama can be used.
 
-**For more information how to set the models up, see [Configuration](#configuration)**
+**For more information on how to set the models up, see [Configuration](#configuration)**
 
 ### Workflow
 1. **Transcript Upload**: The transcript from the meeting (e.g., Google Meet) is uploaded via the Streamlit UI. Along with the transcript, users provide essential information about the context and structure of the desired document.
@@ -68,10 +68,11 @@ That's why I came up with :bookmark_tabs: **Transcript2Docs**. It takes the tran
    ```sh
    pip install -r requirements.txt
    ```
+
 4. **Enable LLM:**
    
    Either configure an API key to a proprietary model:
-   ```
+   ```sh
    echo "OPENAI_API_KEY=your_openai_api_key_here" > .env
    ```
    or get [Ollama](https://github.com/ollama/ollama/tree/main) installed to use local models.
@@ -80,21 +81,48 @@ That's why I came up with :bookmark_tabs: **Transcript2Docs**. It takes the tran
 
 Make sure to review the YAML files for chains and adjust models and prompts if required:
 
-````
+```sh
 lib/chains/transcript.yaml
 lib/chains/docs.yaml
-````
-
-You can configure the LLM (provider, model, temperature) as well as the prompts directly there:
-
 ```
+### Chain Configuration
+You can configure the LLM chains (provider, model, temperature) as well as the prompts directly there:
+
+```yaml
 llm:
-  provider : 'Ollama'
+  provider: 'Ollama'
   model: 'llama3'
   temperature: 0.5
 prompt: |
   <prompt>
 ```
+
+### Provider Configuration
+
+To add new LLM providers or modify existing ones, you can create or edit YAML files in the `lib/config/providers` directory. Each provider has its own YAML file specifying the library and component to be used. For example:
+
+`openai.yaml`:
+  ```yaml
+  OpenAI:
+    library: langchain_openai
+    component: "ChatOpenAI"
+  ```
+
+`anthropic.yaml`:
+  ```yaml
+  Anthropic:
+    library: langchain_anthropic
+    component: "ChatAnthropic"
+  ```
+
+`ollama.yaml`:
+  ```yaml
+  Ollama:
+    library: langchain_community.llms
+    component: "Ollama"
+  ```
+
+This approach allows you to easily add new providers by simply creating a new YAML configuration file.
 
 ## Usage
 
@@ -104,9 +132,9 @@ prompt: |
    ```
 
 2. **Upload your transcript file (.txt format).**
-3. **Enter context keywords and document structure (best as comma seperated, individual values).**
+3. **Enter context keywords and document structure (best as comma-separated, individual values).**
 4. **Select the type of meeting transcript.**
-5. **Click on 'Generate Docs'.**
+5. **Click on ‘Generate Docs’.**
 
 **If you configured a local model, ensure to have Ollama running before starting the application!**
 
@@ -116,4 +144,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-If you have any questions, or want to contribute, feel free to reach out via [dataenthusiast.io](https://dataenthusiast.io/) or directly onl [LinkedIn](https://www.linkedin.com/in/nicolasathanasopoulos/).
+If you have any questions, or want to contribute, feel free to reach out via [dataenthusiast.io](https://dataenthusiast.io/) or directly on [LinkedIn](https://www.linkedin.com/in/nicolasathanasopoulos/).

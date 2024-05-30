@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2024-05-30
+
+### Added
+- **Dynamic Provider Configuration**:
+  - Introduced a new configuration system to define LLM providers in separate YAML files.
+  - Added support for dynamically loading provider configurations and importing required libraries and components.
+  - Created individual YAML configuration files for OpenAI, Anthropic, and Ollama providers.
+  - Enhanced flexibility to add new providers by simply creating a new YAML configuration file.
+
+### Changed
+- **Refactored LLM Creation**:
+  - Updated the `create_llm` function to dynamically load provider configurations and import libraries using `importlib`.
+  - Simplified the process of adding new LLM providers without modifying the core logic.
+
 ## [0.2.0] - 2024-05-25
 
 ### Added

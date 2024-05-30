@@ -1,7 +1,9 @@
+# lib/engine.py
 import yaml
 import logging
 import hashlib
 import os
+import importlib
 
 from langchain.chains import LLMChain
 from langchain_core.prompts import PromptTemplate
@@ -26,7 +28,15 @@ def load_chain_config(file_name):
     """
     Load LLM chain configuration from a YAML file.
     """
-    file_path = f'lib/chains/{file_name}'
+    file_path = f'lib/config/chains/{file_name}'
+    with open(file_path, 'r', encoding='utf-8') as file:
+        return yaml.safe_load(file)
+
+def load_provider_config(provider_name):
+    """
+    Load provider configuration from a YAML file.
+    """
+    file_path = f'lib/config/providers/{provider_name.lower()}.yaml'
     with open(file_path, 'r', encoding='utf-8') as file:
         return yaml.safe_load(file)
 
@@ -38,17 +48,15 @@ def create_llm(llm_config):
     model = llm_config['model']
     temperature = llm_config['temperature']
 
-    if provider == 'OpenAI':
-        from langchain_openai import ChatOpenAI
-        return ChatOpenAI(model=model, temperature=temperature)
-    elif provider == 'Anthropic':
-        from langchain_anthropic import ChatAnthropic
-        return ChatAnthropic(model=model)
-    elif provider == 'Ollama':
-        from langchain_community.llms import Ollama
-        return Ollama(model=model)
-    else:
-        raise ValueError(f"Unsupported LLM provider: {provider}")
+    provider_config = load_provider_config(provider)
+    library_name = provider_config[provider]['library']
+    component_name = provider_config[provider]['component']
+
+    # Dynamically import the required library and component
+    library = importlib.import_module(library_name)
+    component = getattr(library, component_name)
+
+    return component(model=model, temperature=temperature)
 
 def create_chain(chain_config):
     """
