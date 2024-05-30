@@ -1,6 +1,6 @@
 llm:
-  provider : 'Ollama'
-  model: 'llama3'
+  provider : 'OpenAI'
+  model: 'gpt-4o'
   temperature: 0.3
 prompt: |
   <instructions>
@@ -18,8 +18,8 @@ prompt: |
   {transcript}
   </transcript>
   <output>
-  The output should contain all elements from the original transcript but in an improved format. Try to remove redundancies like frequently mentioned names:
+  The output should contain all elements from the original transcript but with improved content. Try to remove redundancies like frequently mentioned names:
   <example>'Attendee: …'</example>
-  Along with any other elements which are not relevant for the overall narrative or didactical flow.
+  Only generate the optimized transcript in plain text. No formatting, pre-fix or markup annotations.
   </output>
   Optimized transcript:

@@ -1,6 +1,6 @@
 llm:
-  provider : 'OpenAI'
-  model: 'gpt-4o'
+  provider : 'Ollama'
+  model: 'llama3'
   temperature: 0.5
 prompt: |
   <instructions>

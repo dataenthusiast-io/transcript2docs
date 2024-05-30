@@ -1,0 +1,3 @@
+Ollama:
+  library: langchain_community.llms
+  component: "Ollama"

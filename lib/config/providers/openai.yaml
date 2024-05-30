@@ -1,0 +1,3 @@
+OpenAI:
+  library: langchain_openai
+  component: "ChatOpenAI"

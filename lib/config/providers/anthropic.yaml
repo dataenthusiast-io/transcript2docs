@@ -1,0 +1,3 @@
+Anthropic:
+  library: langchain_anthropic
+  component: "ChatAnthropic"
