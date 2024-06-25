@@ -90,12 +90,17 @@ def transcript_processing(file, context, type):
         text_splitter = TokenTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
         chunks = text_splitter.split_text(transcript_content)
 
+        # Invoking chain using parallelized batch method
+        response = transcript_chain.batch([{"context" : context,
+                                            "transcript_type" : type,
+                                            "transcript" : chunk} for chunk in chunks])
+        
+        # Extracting responses from LLM
         rewritten_transcript = []
-        for chunk in chunks:
-            response = transcript_chain.invoke({"context": context, "transcript": chunk, "transcript_type": type})
-            rewritten_text = response["text"]
-            rewritten_transcript.append(rewritten_text)
+        for text in response:
+            rewritten_transcript.append(text["text"])
 
+        # Joining fragmented responses into joint transcript
         final_transcript = ' '.join(rewritten_transcript)
 
         # Cache the processed transcript
