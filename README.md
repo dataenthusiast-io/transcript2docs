@@ -97,35 +97,6 @@ prompt: |
   <prompt>
 ```
 
-### Provider Configuration
-
-**Make sure to have the necessary libraries installed on your virtual environment before adding the providers!**
-
-To add new LLM providers or modify existing ones, you can create or edit YAML files in the `lib/config/providers` directory. Each provider has its own YAML file specifying the library and component to be used. For example:
-
-`openai.yaml`:
-  ```yaml
-  OpenAI:
-    library: langchain_openai
-    component: "ChatOpenAI"
-  ```
-
-`anthropic.yaml`:
-  ```yaml
-  Anthropic:
-    library: langchain_anthropic
-    component: "ChatAnthropic"
-  ```
-
-`ollama.yaml`:
-  ```yaml
-  Ollama:
-    library: langchain_community.llms
-    component: "Ollama"
-  ```
-
-This approach allows you to easily add new providers by simply creating a new YAML configuration file.
-
 ## Usage
 
 1. **Run the Streamlit application:**
