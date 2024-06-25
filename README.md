@@ -28,6 +28,7 @@ That's why I came up with :bookmark_tabs: **Transcript2Docs**. It takes the tran
 - **Custom Document Structure**: Create documents with a user-defined structure.
 - **Multiple Meeting Types**: Supports various types of meetings like Live Tutorial, Technical Walk-Through, Knowledge Sharing, and General Meeting.
 - **Easy Integration**: Works with transcripts from any provider.
+- **Support for Multiple File Types**: Now supports `.txt`, `.docx`, and `.vtt` files for transcript uploads.
 - **Modular LLM Configuration**: Based on LangChain, you can configure the provider, model, and temperature individually for each chain (including localhost models supported by Ollama).
 - **Configurable Chains**: Chains are configurable through the YAML files `transcript.yaml` and `docs.yaml`.
 
