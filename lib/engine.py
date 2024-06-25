@@ -4,6 +4,8 @@ import logging
 import hashlib
 import os
 import importlib
+from docx import Document
+import webvtt
 
 from langchain.chains import LLMChain
 from langchain_core.prompts import PromptTemplate
@@ -68,12 +70,31 @@ def create_chain(chain_config):
     prompt_template = PromptTemplate.from_template(template=config['prompt'])
     return LLMChain(llm=llm, prompt=prompt_template)
 
+def read_txt(file):
+    return file.getvalue().decode('utf-8')
+
+def read_docx(file):
+    doc = Document(file)
+    return "\n".join([para.text for para in doc.paragraphs])
+
+def read_vtt(file):
+    vtt = webvtt.read_buffer(file)
+    return "\n".join([caption.text for caption in vtt])
+
 def transcript_processing(file, context, type):
     """
     Process the transcript file with given context and transcript type.
     """
     try:
-        transcript_content = file.getvalue().decode('utf-8')
+        if file.type == "text/plain":
+            transcript_content = read_txt(file)
+        elif file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+            transcript_content = read_docx(file)
+        elif file.type == "text/vtt":
+            transcript_content = read_vtt(file)
+        else:
+            raise ValueError("Unsupported file type")
+
         transcript_hash = hashlib.md5(transcript_content.encode()).hexdigest()
         cache_file = f'{cache_dir}/{transcript_hash}.txt'
 

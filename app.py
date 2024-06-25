@@ -13,7 +13,7 @@ st.sidebar.header("Input Parameters")
 context_keywords = st.sidebar.text_area("Enter context keywords:", help="Separate keywords with commas. This helps to optimize the original transcript and write the documentation.")
 docs_structure = st.sidebar.text_area("Enter document structure:", help="Separate by commas. Outline the desired structure of the final documentation.")
 transcript_type = st.sidebar.selectbox("Transcript type:", ("Live Tutorial", "Technical Walk-Through", "Knowledge Sharing", "General Meeting"), help="Specify the type of transcript")
-transcript_file = st.sidebar.file_uploader("Upload transcript file:", type=['txt'], help="Upload the transcript .txt file here.")
+transcript_file = st.sidebar.file_uploader("Upload transcript file:", type=['txt', 'docx', 'vtt'], help="Upload the transcript .txt, .docx, or .vtt file here.")
 
 # Initialize session state for storing the generated document
 if 'final_docs' not in st.session_state:
