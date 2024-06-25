@@ -1,15 +1,8 @@
-# lib/engine.py
-import yaml
-import logging
 import hashlib
-import os
-import importlib
-from docx import Document
-import webvtt
-
-from langchain.chains import LLMChain
-from langchain_core.prompts import PromptTemplate
-from langchain_text_splitters import TokenTextSplitter
+import logging
+from .utils.files import read_txt, read_docx, read_vtt, split_text
+from .utils.chains import create_chain
+from .utils.cache import load_from_cache, save_to_cache
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -20,66 +13,6 @@ docs_config = "docs.yaml"
 
 # Setting chunk size
 chunk_size = 1000
-
-# Ensure cache directory exists
-cache_dir = 'lib/cache'
-if not os.path.exists(cache_dir):
-    os.makedirs(cache_dir)
-
-def load_chain_config(file_name):
-    """
-    Load LLM chain configuration from a YAML file.
-    """
-    file_path = f'lib/config/chains/{file_name}'
-    with open(file_path, 'r', encoding='utf-8') as file:
-        return yaml.safe_load(file)
-
-def load_provider_config(provider_name):
-    """
-    Load provider configuration from a YAML file.
-    """
-    file_path = f'lib/config/providers/{provider_name.lower()}.yaml'
-    with open(file_path, 'r', encoding='utf-8') as file:
-        return yaml.safe_load(file)
-
-def create_llm(llm_config):
-    """
-    Create an LLM instance based on the provided configuration.
-    """
-    provider = llm_config['provider']
-    model = llm_config['model']
-    temperature = llm_config['temperature']
-
-    provider_config = load_provider_config(provider)
-    library_name = provider_config[provider]['library']
-    component_name = provider_config[provider]['component']
-
-    # Dynamically import the required library and component
-    library = importlib.import_module(library_name)
-    component = getattr(library, component_name)
-
-    return component(model=model, temperature=temperature)
-
-def create_chain(chain_config):
-    """
-    Create an LLM chain based on the provided configuration.
-    """
-    config = load_chain_config(chain_config)
-    llm_config = config['llm']
-    llm = create_llm(llm_config)
-    prompt_template = PromptTemplate.from_template(template=config['prompt'])
-    return LLMChain(llm=llm, prompt=prompt_template)
-
-def read_txt(file):
-    return file.getvalue().decode('utf-8')
-
-def read_docx(file):
-    doc = Document(file)
-    return "\n".join([para.text for para in doc.paragraphs])
-
-def read_vtt(file):
-    vtt = webvtt.read_buffer(file)
-    return "\n".join([caption.text for caption in vtt])
 
 def transcript_processing(file, context, type):
     """
@@ -96,20 +29,16 @@ def transcript_processing(file, context, type):
             raise ValueError("Unsupported file type")
 
         transcript_hash = hashlib.md5(transcript_content.encode()).hexdigest()
-        cache_file = f'{cache_dir}/{transcript_hash}.txt'
 
         # Check if the processed transcript is already cached
-        try:
-            with open(cache_file, 'r', encoding='utf-8') as cache:
-                logging.info("Loading cached transcript.")
-                return cache.read()
-        except FileNotFoundError:
-            logging.info("No cached transcript found. Processing new transcript.")
+        cached_transcript = load_from_cache(transcript_hash)
+        if cached_transcript:
+            logging.info("Loading cached transcript.")
+            return cached_transcript
 
+        logging.info("No cached transcript found. Processing new transcript.")
         transcript_chain = create_chain(transcript_config)
-        chunk_overlap = int(chunk_size * 0.05)
-        text_splitter = TokenTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
-        chunks = text_splitter.split_text(transcript_content)
+        chunks = split_text(transcript_content, chunk_size)
 
         # Invoking chain using parallelized batch method
         response = transcript_chain.batch([{"context" : context,
@@ -117,16 +46,13 @@ def transcript_processing(file, context, type):
                                             "transcript" : chunk} for chunk in chunks])
         
         # Extracting responses from LLM
-        rewritten_transcript = []
-        for text in response:
-            rewritten_transcript.append(text["text"])
+        rewritten_transcript = [text["text"] for text in response]
 
         # Joining fragmented responses into joint transcript
         final_transcript = ' '.join(rewritten_transcript)
 
         # Cache the processed transcript
-        with open(cache_file, 'w', encoding='utf-8') as cache:
-            cache.write(final_transcript)
+        save_to_cache(transcript_hash, final_transcript)
 
         return final_transcript
     except Exception as e:
