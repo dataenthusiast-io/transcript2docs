@@ -1,6 +1,13 @@
 import streamlit as st
 from lib.engine import transcript_processing, docs_generation
 import logging
+import os
+
+# Load the API key from environment variables
+api_key = os.getenv("OPENAI_API_KEY")
+
+if not api_key:
+    st.error("API key not found. Please set the API_KEY environment variable.")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -41,5 +48,7 @@ if st.sidebar.button('Generate Docs'):
 
 # Display the generated document if it exists in session state
 if st.session_state.final_docs:
-    st.code(st.session_state.final_docs, language="markdown")
+    # Render the final document as HTML markdown with custom CSS class
+    st.markdown(st.session_state.final_docs)
+    # Provide a download button to save the document as a .md file
     st.download_button(label="Download Docs", data=st.session_state.final_docs, file_name="generated_docs.md", mime="text/markdown")
