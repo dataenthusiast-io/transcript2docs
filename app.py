@@ -43,3 +43,7 @@ if st.sidebar.button('Generate Docs'):
 if st.session_state.final_docs:
     st.code(st.session_state.final_docs, language="markdown")
     st.download_button(label="Download Docs", data=st.session_state.final_docs, file_name="generated_docs.md", mime="text/markdown")
+
+if __name__ == '__main__':
+    st.set_option('server.enableCORS', True)
+    st.run()
